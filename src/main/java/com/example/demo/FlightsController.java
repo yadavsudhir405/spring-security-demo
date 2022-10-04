@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,8 @@ public class FlightsController {
     }
 
     @GetMapping
-    public Iterable<Flight> getFlights() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.flightService.findAllByUser(username);
+    public Iterable<Flight> getFlights(Authentication authentication) {
+        return this.flightService.findAllByUser(authentication.getName());
     }
 
 }
