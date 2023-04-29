@@ -6,10 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Collection;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -34,12 +39,41 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(
-                User.builder()
-                        .username("foo")
-                        .password("{noop}foo") // without bcrypt or noop password as foo won't work
-                        .authorities("ADMIN")
-                        .build()
-        );
+     return username -> new UserDetails() {
+         @Override
+         public Collection<? extends GrantedAuthority> getAuthorities() {
+             return null;
+         }
+
+         @Override
+         public String getPassword() {
+             return "{noop}bar";
+         }
+
+         @Override
+         public String getUsername() {
+             return "foo";
+         }
+
+         @Override
+         public boolean isAccountNonExpired() {
+             return true;
+         }
+
+         @Override
+         public boolean isAccountNonLocked() {
+             return true;
+         }
+
+         @Override
+         public boolean isCredentialsNonExpired() {
+             return true;
+         }
+
+         @Override
+         public boolean isEnabled() {
+             return true;
+         }
+     };
     }
 }
