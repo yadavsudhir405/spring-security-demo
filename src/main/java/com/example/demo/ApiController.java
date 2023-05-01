@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController {
 
     @GetMapping("/public")
-    public String publicGreeting() {
-        return "Public Greeting 😄";
+    public String publicGreeting(Users users) {
+        return "Public Greeting for "+users.getFirstName() +" and email "+ users.getEmail() +"  😄";
     }
     @GetMapping("/private")
-    public String privateGreeting() {
-        return "Private Greeting 😎";
+    public String privateGreeting(Users users) {
+        return "Private Greeting for "+users.getEmail()+"and email "+users.getEmail()+" 😎";
     }
 
 
