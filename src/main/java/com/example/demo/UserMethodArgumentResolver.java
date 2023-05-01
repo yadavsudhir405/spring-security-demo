@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,9 +24,14 @@ public class UserMethodArgumentResolver implements HandlerMethodArgumentResolver
     @Override
     public Users resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal().getClass().equals(Users.class)) {
+        if (authentication.getClass().isAssignableFrom(UsernamePasswordAuthenticationToken.class)) {
             return (Users) authentication.getPrincipal();
-        } else {
+        } else if (authentication.getClass().isAssignableFrom(RobotAuthenticationToken.class)) {
+            Users users = new Users();
+            users.setFirstName(authentication.getPrincipal().toString());
+            users.setEmail("Robot@gmail.com");
+            return users;
+        } else  {
             Map<String, Object> claims = ((OidcUser) authentication.getPrincipal()).getClaims();
             Users users = new Users();
             users.setEmail(claims.get("email").toString());
