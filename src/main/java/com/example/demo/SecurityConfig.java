@@ -30,6 +30,7 @@ public class SecurityConfig {
                             configurer.anyRequest().authenticated();
                         }
                 )
+                .authenticationProvider(new SuperUserAuthenticationProvider())
                 .addFilterBefore(this.robotAuthenticationFilter, FilterSecurityInterceptor.class)
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
