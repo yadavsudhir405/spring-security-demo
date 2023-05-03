@@ -2,11 +2,14 @@ package com.example.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+
+import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -14,14 +17,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private RobotAuthenticationFilter robotAuthenticationFilter;
-
-    public SecurityConfig(RobotAuthenticationFilter robotAuthenticationFilter) {
-        this.robotAuthenticationFilter = robotAuthenticationFilter;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        ProviderManager providerManager = new ProviderManager(List.of(new RobotAuthenticationProvider().passwords("beep-beep")));
         return httpSecurity
                 .authorizeRequests(
                         configurer -> {
@@ -31,7 +29,8 @@ public class SecurityConfig {
                         }
                 )
                 .authenticationProvider(new SuperUserAuthenticationProvider())
-                .addFilterBefore(this.robotAuthenticationFilter, FilterSecurityInterceptor.class)
+                .authenticationProvider(new RobotAuthenticationProvider().passwords("beep-beep"))
+                .addFilterBefore(new RobotAuthenticationFilter(providerManager), FilterSecurityInterceptor.class)
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
                 .build();

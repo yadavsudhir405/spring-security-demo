@@ -19,6 +19,8 @@ public class SuperUserAuthenticationProvider implements AuthenticationProvider {
             users.setEmail("super-user@gmail.com");
             return UsernamePasswordAuthenticationToken.authenticated(users, null, List.of(() -> "SUPER-USER"));
         } else {
+            // when null is returned provider will try to authenticate with different Provider
+            // in this case DaoAuthenticationProvider
             return null;
         }
     }
