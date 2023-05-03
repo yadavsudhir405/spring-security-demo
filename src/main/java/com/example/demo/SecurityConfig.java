@@ -1,8 +1,12 @@
 package com.example.demo;
 
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +15,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -18,8 +23,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationEventPublisher publisher) throws Exception {
+        {
+            httpSecurity.getSharedObject(AuthenticationManagerBuilder.class).authenticationEventPublisher(publisher);
+        }
+
         ProviderManager providerManager = new ProviderManager(List.of(new RobotAuthenticationProvider().passwords("beep-beep")));
+        providerManager.setAuthenticationEventPublisher(publisher);
         return httpSecurity
                 .authorizeRequests(
                         configurer -> {
@@ -39,6 +49,17 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetails(UserService userService) {
         return userService::findByFirstName;
+    }
+
+    @Bean
+    public ApplicationListener<AuthenticationSuccessEvent> authenticationSuccessEventApplicationListener() {
+        return event -> {
+            System.out.println(format("🙏 Authentication success 🎉  [%s] [%s]",
+                    event.getAuthentication().getClass().getName(),
+                    event.getAuthentication().getName()
+            ));
+        };
+
     }
 
 
