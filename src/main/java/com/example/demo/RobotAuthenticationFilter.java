@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,9 +18,9 @@ import java.io.IOException;
 
 public class RobotAuthenticationFilter extends OncePerRequestFilter {
 
-    private final ProviderManager providerManager;
+    private final AuthenticationManager providerManager;
 
-    public RobotAuthenticationFilter(ProviderManager providerManager) {
+    public RobotAuthenticationFilter(AuthenticationManager providerManager) {
         this.providerManager = providerManager;
     }
 

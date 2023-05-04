@@ -13,7 +13,12 @@ import static com.example.demo.RobotAuthenticationToken.authenticated;
 public class RobotAuthenticationProvider implements AuthenticationProvider {
 
 
-    private final List<String> passwords = new ArrayList<>();
+    private final List<String> passwords;
+
+    public RobotAuthenticationProvider(List<String> passwords) {
+        this.passwords = passwords;
+    }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
        // String username = (String) authentication.getPrincipal();

@@ -4,16 +4,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-
-import java.util.List;
 
 import static java.lang.String.format;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -28,8 +24,6 @@ public class SecurityConfig {
             httpSecurity.getSharedObject(AuthenticationManagerBuilder.class).authenticationEventPublisher(publisher);
         }
 
-        ProviderManager providerManager = new ProviderManager(List.of(new RobotAuthenticationProvider().passwords("beep-beep")));
-        providerManager.setAuthenticationEventPublisher(publisher);
         return httpSecurity
                 .authorizeRequests(
                         configurer -> {
@@ -39,8 +33,9 @@ public class SecurityConfig {
                         }
                 )
                 .authenticationProvider(new SuperUserAuthenticationProvider())
-                .authenticationProvider(new RobotAuthenticationProvider().passwords("beep-beep"))
-                .addFilterBefore(new RobotAuthenticationFilter(providerManager), FilterSecurityInterceptor.class)
+                .apply(new RobotLoginConfigurer())
+                    .passwords("beep-beep")
+                .and()
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
                 .build();
