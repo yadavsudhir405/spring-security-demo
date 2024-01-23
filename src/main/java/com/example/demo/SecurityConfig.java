@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .apply(new RobotLoginConfigurer())
                     .passwords("beep-beep")
                 .and()
+                .httpBasic().and()
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
                 .build();

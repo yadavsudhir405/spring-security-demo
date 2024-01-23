@@ -1,7 +1,8 @@
 # Table of Contents:
 1. [Architecture](#spring-security-architecture)
 2. [Csrf Attack](#csrf-attack)
-3. [Authentication](#authentication)
+3. [Important Filters](#important-filters)
+4[Authentication](#authentication)
 
 ### Spring Security Architecture
  To understand Spring Security works in Web-Application, it is important to understand how Web-Application
@@ -97,5 +98,9 @@ authentication token etc that's why server thinks it's valid authenticated reque
 Conditions for Csrf attack to happen: 
 * Users must have active session opened in the browsers and server has not taken any preventive measure to counter this.
 * Csrf attack won't happen in mobile app.
+
+### Important Filters
+<img src="./assets/filters.png"/> 
+
 
 ### Authentication
